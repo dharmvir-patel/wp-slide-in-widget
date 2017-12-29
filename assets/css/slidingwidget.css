@@ -1,0 +1,29 @@
+body {
+    overflow-x: hidden;
+}
+#slideout {
+    background: #666;
+    position: absolute;
+    width: 280px;
+    height: 80px;
+    top: 150px;
+    right:-280px;
+    padding-left: 20px
+}
+    
+#clickme {
+    position: absolute;
+    top: 0; 
+    left: -25px;
+    height: 25px;
+    width: 25px;
+    background-color: #ff0000;
+    z-index: 9999999;
+    background-image: url(../images/default-icon.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#slidecontent {
+    float:left;
+}
