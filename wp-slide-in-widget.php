@@ -88,6 +88,7 @@ function dv_sliding_widgets_create_menu() {
 function register_dv_sliding_widgets_settings() {
 	//register our settings
 	register_setting( 'dvsw-settings-group', 'dvsw_icon_url' );
+  register_setting( 'dvsw-settings-group', 'dvsw_icon_bg' );
 	register_setting( 'dvsw-settings-group', 'dvsw_width' );
 	register_setting( 'dvsw-settings-group', 'dvsw_height' );
 	register_setting( 'dvsw-settings-group', 'dvsw_background' );
@@ -105,9 +106,15 @@ function dv_sliding_widgets_settings_page() {
     <?php do_settings_sections( 'dvsw-settings-group' ); ?>
 
     <table class="form-table">
+
         <tr valign="top">
         <th scope="row">Icon URL</th>
         <td><input type="text" name="dvsw_icon_url" value="<?php echo esc_attr( get_option('dvsw_icon_url') ); ?>" /></td>
+        </tr>
+
+        <tr valign="top">
+        <th scope="row">Icon Background</th>
+        <td><input type="text" name="dvsw_icon_bg" value="<?php echo esc_attr( get_option('dvsw_icon_bg') ); ?>" /></td>
         </tr>
          
         <tr valign="top">
@@ -121,6 +128,11 @@ function dv_sliding_widgets_settings_page() {
         </tr>
 
         <tr valign="top">
+        <th scope="row">Position Top</th>
+        <td><input type="text" name="dvsw_position_top" value="<?php echo esc_attr( get_option('dvsw_position_top') ); ?>" /> px</td>
+        </tr>
+
+        <tr valign="top">
         <th scope="row">Widget Background</th>
         <td><input type="text" name="dvsw_background" value="<?php echo esc_attr( get_option('dvsw_background') ); ?>" /></td>
         </tr>
@@ -130,14 +142,60 @@ function dv_sliding_widgets_settings_page() {
         <td><input type="text" name="dvsw_font_color" value="<?php echo esc_attr( get_option('dvsw_font_color') ); ?>" /></td>
         </tr>
 
-        <tr valign="top">
-        <th scope="row">Position Top</th>
-        <td><input type="text" name="dvsw_position_top" value="<?php echo esc_attr( get_option('dvsw_position_top') ); ?>" /></td>
-        </tr>
+
     </table>
     
     <?php submit_button(); ?>
 
 </form>
 </div>
-<?php } ?>
+<?php } 
+
+/*
+* Get style settings and add styles to wordpress.
+*/
+function dv_sliding_widgets_dynamic_styles() {
+
+    $styles = array();
+
+    $background = ('' == esc_attr(get_option( 'dvsw_background') ) ) ? "#666" : esc_attr(get_option( 'dvsw_background') );
+    $css['#slideout']['background'] = $background;
+
+    $top = ('' == esc_attr(get_option( 'dvsw_position_top') ) ) ? '150' : esc_attr(get_option( 'dvsw_position_top') );
+    $css['#slideout']['top'] = $top.'px';
+
+    $width = ('' == esc_attr(get_option( 'dvsw_width') ) ) ? '280' : esc_attr(get_option( 'dvsw_width') );
+    $css['#slideout']['width'] = $width.'px';
+
+    $right = ('' == esc_attr(get_option( 'dvsw_width') ) ) ? '280' : esc_attr(get_option( 'dvsw_width') );
+    $css['#slideout']['right'] = '-'.$right.'px';
+
+    if ('' != esc_attr(get_option( 'dvsw_height') ) ) {
+      $css['#slideout']['height'] = $height.'px';
+    }
+
+    $color = ('' == esc_attr(get_option( 'dvsw_font_color') ) ) ? "#000" : esc_attr(get_option( 'dvsw_font_color') );
+    $css['#slideout']['color'] = $color;
+
+    $icon = ('' == esc_attr(get_option( 'dvsw_icon_url') ) ) ? WP_SLIDE_IN_PLUGIN_URL. "assets/images/default-icon.png" : esc_attr(get_option( 'dvsw_icon_url') );
+    $css['#clickme']['background-image'] = 'url('.$icon.')';
+
+    $icon_background = ('' == esc_attr(get_option( 'dvsw_icon_bg') ) ) ? "#ff0000" : esc_attr(get_option( 'dvsw_icon_bg') );
+    $css['#clickme']['background-color'] = $icon_background;
+    
+
+    $css = apply_filters( 'dv_sliding_widgets_css_array_filter', $css );
+
+    $final_css = '';
+    foreach ( $css as $style => $style_array ) {
+        $final_css .= $style . '{';
+        foreach ( $style_array as $property => $value ) {
+            $final_css .= $property . ':' . $value . ';';
+        }
+        $final_css .= '}';
+    }
+
+    echo '<style type="text/css">'.$final_css.'</style>';
+}
+add_action( 'wp_head', 'dv_sliding_widgets_dynamic_styles', 99 );
+?>
