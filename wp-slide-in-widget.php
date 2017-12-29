@@ -171,7 +171,7 @@ function dv_sliding_widgets_dynamic_styles() {
     $css['#slideout']['right'] = '-'.$right.'px';
 
     if ('' != esc_attr(get_option( 'dvsw_height') ) ) {
-      $css['#slideout']['height'] = $height.'px';
+      $css['#slideout']['height'] = esc_attr(get_option( 'dvsw_height') ).'px';
     }
 
     $color = ('' == esc_attr(get_option( 'dvsw_font_color') ) ) ? "#000" : esc_attr(get_option( 'dvsw_font_color') );
