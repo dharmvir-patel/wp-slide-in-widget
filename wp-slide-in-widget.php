@@ -34,12 +34,14 @@ add_action( 'widgets_init', 'dv_sliding_widgets_init' );
 
 function dv_sliding_widgets_display() {
 	if ( is_active_sidebar( 'sliding_widget_1' ) ) :
+    $w_position = esc_attr( get_option('dvsw_position') );
+    $clickme_class = $w_position=='left' ? 'left' : 'right';  
     ?>
     <div id="slideout">
 	    <div id="slidecontent">
 	        <?php dynamic_sidebar( 'sliding_widget_1' ); ?>
 	    </div>
-	    <div id="clickme">
+	    <div id="clickme" class="<?php echo $clickme_class; ?>">
 	    </div>
 	</div>
 	<?php
@@ -88,7 +90,8 @@ function dv_sliding_widgets_create_menu() {
 function register_dv_sliding_widgets_settings() {
 	//register our settings
 	register_setting( 'dvsw-settings-group', 'dvsw_icon_url' );
-  register_setting( 'dvsw-settings-group', 'dvsw_icon_bg' );
+    register_setting( 'dvsw-settings-group', 'dvsw_icon_bg' );
+    register_setting( 'dvsw-settings-group', 'dvsw_position' );
 	register_setting( 'dvsw-settings-group', 'dvsw_width' );
 	register_setting( 'dvsw-settings-group', 'dvsw_height' );
 	register_setting( 'dvsw-settings-group', 'dvsw_background' );
@@ -104,6 +107,7 @@ function dv_sliding_widgets_settings_page() {
 <form method="post" action="options.php">
     <?php settings_fields( 'dvsw-settings-group' ); ?>
     <?php do_settings_sections( 'dvsw-settings-group' ); ?>
+    <?php $w_position = esc_attr( get_option('dvsw_position') ); ?>
 
     <table class="form-table">
 
@@ -115,6 +119,15 @@ function dv_sliding_widgets_settings_page() {
         <tr valign="top">
         <th scope="row">Icon Background</th>
         <td><input type="text" name="dvsw_icon_bg" value="<?php echo esc_attr( get_option('dvsw_icon_bg') ); ?>" /></td>
+        </tr>
+
+        <tr valign="top">
+        <th scope="row">Widget Position</th>
+        <td><select name="dvsw_position">
+              <option value="">---</option>
+              <option value="left" <?php if($w_position=="left"){echo 'selected="selected"';} ?>>Left</option>
+              <option value="right" <?php if($w_position=="right"){echo 'selected="selected"';} ?>>Right</option>
+            </select>
         </tr>
          
         <tr valign="top">
@@ -157,6 +170,8 @@ function dv_sliding_widgets_settings_page() {
 function dv_sliding_widgets_dynamic_styles() {
 
     $styles = array();
+    
+    $w_position = esc_attr(get_option( 'dvsw_position') );
 
     $background = ('' == esc_attr(get_option( 'dvsw_background') ) ) ? "#666" : esc_attr(get_option( 'dvsw_background') );
     $css['#slideout']['background'] = $background;
@@ -168,7 +183,14 @@ function dv_sliding_widgets_dynamic_styles() {
     $css['#slideout']['width'] = $width.'px';
 
     $right = ('' == esc_attr(get_option( 'dvsw_width') ) ) ? '280' : esc_attr(get_option( 'dvsw_width') );
-    $css['#slideout']['right'] = '-'.$right.'px';
+    if($w_position=='left'){
+        $css['#slideout']['left'] = '-'.$right.'px';
+        $css['#clickme']['right'] = '-25px';
+    }
+    else{
+        $css['#slideout']['right'] = '-'.$right.'px';
+        $css['#clickme']['left'] = '-25px';
+    }
 
     if ('' != esc_attr(get_option( 'dvsw_height') ) ) {
       $css['#slideout']['height'] = esc_attr(get_option( 'dvsw_height') ).'px';
