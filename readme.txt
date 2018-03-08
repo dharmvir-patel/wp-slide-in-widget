@@ -16,3 +16,5 @@ This plugin will let you create a widget area which will show at frontend as sli
 == Installation ==
 
 Best is to install directly from WordPress. If manual installation is required, please make sure that the plugin files are in a folder named "wp-slide-in-widget" (not two nested folders) in the WordPress plugins folder, usually "wp-content/plugins".
+
+Happy coding !
